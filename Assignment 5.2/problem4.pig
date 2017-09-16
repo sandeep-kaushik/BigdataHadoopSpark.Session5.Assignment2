@@ -1,0 +1,18 @@
+
+REGISTER '/home/acadgild/pig/airline_usecase/piggybank.jar';
+ 
+A = load '/home/acadgild/pig/airline_usecase/DelayedFlights.csv' USING org.apache.pig.piggybank.storage.CSVExcelStorage(',','NO_MULTILINE','UNIX','SKIP_INPUT_HEADER');
+ 
+B = FOREACH A GENERATE (chararray)$17 as origin, (chararray)$18 as dest, (int)$24 as diversion;
+ 
+C = FILTER B BY (origin is not null) AND (dest is not null) AND (diversion == 1);
+ 
+D = GROUP C by (origin,dest);
+ 
+E = FOREACH D generate group, COUNT(C.diversion);
+ 
+F = ORDER E BY $1 DESC;
+ 
+Result = limit F 10;
+ 
+store Result into '/home/acadgild/Desktop/5.2/output/problem4';
